@@ -57,4 +57,14 @@
         Allow from 127.0.0.0/255.0.0.0 ::1/128
     </Directory>
 
+    # set caching
+    <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+        ExpiresActive On
+        ExpiresDefault "access plus 1 year"
+    </FilesMatch>
+
+    # set output compression
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/x-javascript text/javascript
+
+
 </VirtualHost>
