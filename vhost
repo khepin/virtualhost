@@ -25,10 +25,12 @@
 			RewriteEngine On
 
 			# we skip all files with .something
-			RewriteCond %{REQUEST_URI} \..+$
-			RewriteCond %{REQUEST_URI} !\.html$
-			RewriteCond %{REQUEST_URI} !\.json$
-			RewriteRule .* - [L]
+			# if using a dynamic image manipulation lib, 
+			# all images still have to go through the controller
+			# RewriteCond %{REQUEST_URI} \..+$
+			# RewriteCond %{REQUEST_URI} !\.html$
+			# RewriteCond %{REQUEST_URI} !\.json$
+			# RewriteRule .* - [L]
 
 			# we check if the .html version is here (caching)
 			RewriteRule ^$ index.html [QSA]
