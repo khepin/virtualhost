@@ -1,0 +1,47 @@
+<VirtualHost *:80>
+    DocumentRoot "/path/to/dir"
+    ServerName projects.loc
+    <Directory />
+        Options FollowSymLinks
+        AllowOverride None
+    </Directory>
+    <Directory /path/to/dir/>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride None
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+    <Directory "/usr/lib/cgi-bin">
+        AllowOverride None
+        Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+        Order allow,deny
+        Allow from all
+    </Directory>
+    <Location />
+        <IfModule mod_rewrite.c>
+            RewriteEngine On
+
+            # we skip all files with .something
+            # if using a dynamic image manipulation lib,
+            # all images still have to go through the controller
+            # RewriteCond %{REQUEST_URI} \..+$
+            # RewriteCond %{REQUEST_URI} !\.html$
+            # RewriteCond %{REQUEST_URI} !\.json$
+            # RewriteRule .* - [L]
+
+            # we check if the .html version is here (caching)
+            RewriteRule ^$ index.html [QSA]
+            RewriteRule ^([^.]+)$ $1.html [QSA]
+            RewriteCond %{REQUEST_FILENAME} !-f
+
+            # no, so we redirect to our front web controller
+            RewriteRule ^(.*)$ index.php [QSA,L]
+        </IfModule>
+    </Location>
+
+    # Possible values include: debug, info, notice, warn, error, crit,
+    # alert, emerg.
+    LogLevel warn
+</VirtualHost>
