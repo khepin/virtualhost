@@ -1,0 +1,73 @@
+<VirtualHost *:80>
+	#ServerAdmin webmaster@localhost
+	ServerName  =project=.loc
+	DocumentRoot =server_root_dir=
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory =server_root_dir=/>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		Allow from all
+		Require all granted
+	</Directory>
+
+	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+	<Directory "/usr/lib/cgi-bin">
+		AllowOverride None
+		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Order allow,deny
+		Allow from all
+	</Directory>
+	<Location />
+		<IfModule mod_rewrite.c>
+			RewriteEngine On
+
+			# we skip all files with .something
+			# if using a dynamic image manipulation lib, 
+			# all images still have to go through the controller
+			# RewriteCond %{REQUEST_URI} \..+$
+			# RewriteCond %{REQUEST_URI} !\.html$
+			# RewriteCond %{REQUEST_URI} !\.json$
+			# RewriteRule .* - [L]
+
+			# we check if the .html version is here (caching)
+			RewriteRule ^$ index.html [QSA]
+			RewriteRule ^([^.]+)$ $1.html [QSA]
+			RewriteCond %{REQUEST_FILENAME} !-f
+
+			# no, so we redirect to our front web controller
+			RewriteRule ^(.*)$ index.php [QSA,L]
+		</IfModule>
+	</Location>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    Alias /doc/ "/usr/share/doc/"
+    <Directory "/usr/share/doc/">
+        Options Indexes MultiViews FollowSymLinks
+        AllowOverride None
+        Order deny,allow
+        Deny from all
+        Allow from 127.0.0.0/255.0.0.0 ::1/128
+    </Directory>
+
+    # set caching
+    <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+        ExpiresActive On
+        ExpiresDefault "access plus 1 year"
+    </FilesMatch>
+
+    # set output compression
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/x-javascript text/javascript
+
+
+</VirtualHost>
