@@ -1,12 +1,12 @@
 <VirtualHost *:80>
 	#ServerAdmin webmaster@localhost
 	ServerName  =project=.loc
-	DocumentRoot =server_root_dir=
+	DocumentRoot =root_dir=
 	<Directory />
 		Options FollowSymLinks
 		AllowOverride None
 	</Directory>
-	<Directory =server_root_dir=/>
+	<Directory =root_dir=/>
 		Options Indexes FollowSymLinks MultiViews
 		AllowOverride None
 		Order allow,deny
